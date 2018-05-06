@@ -1,2 +1,4 @@
 # weblist-web
-web list site web app
+WebList web app
+
+see [WebList](http://weblist.site)

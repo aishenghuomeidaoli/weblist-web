@@ -6,21 +6,24 @@
     </div>
     <b-form-group
       label="<code>Store And Share<br/>存储与分享</code>">
-      <!--<b-form-checkbox-group buttons-->
-      <!--button-variant="success"-->
-      <!--size="md"-->
-      <!--name="engines"-->
-      <!--:options="options" v-model="selected">-->
-      <!--</b-form-checkbox-group>-->
-      <b-form-radio-group buttons
-                          button-variant="success"
-                          v-model="selected"
-                          :options="options"
-                          name="engine"/>
+      <div>
+        <b-form-radio-group buttons
+                            button-variant="success"
+                            v-model="typeSelectedCode"
+                            :options="result.typeOptions"
+                            name="engine"/>
+      </div>
+      <br/>
+      <div>
+        <b-form-radio-group buttons
+                            button-variant="success"
+                            v-model="siteSelectedCode"
+                            :options="result.siteOptions"
+                            name="site"/>
+      </div>
     </b-form-group>
     <b-input-group>
       <input type="text" class="form-control" @keyup.enter="search" v-model="keyword">
-      <!--<b-form-input @keyup.enter="search"></b-form-input>-->
       <b-input-group-append>
         <b-btn variant="outline-success" @click="search">搜索</b-btn>
       </b-input-group-append>
@@ -44,35 +47,113 @@
     methods: {
       search: function () {
         if (this.keyword != null && this.keyword != '') {
-          if (this.selected in this.engines) {
-            window.open(this.engines[this.selected] + this.keyword)
+          for (let engine of this.engines) {
+            if (engine.code == this.typeSelectedCode) {
+              for (let site of engine.sites) {
+                if (site.code == this.siteSelectedCode) {
+                  let url = site.url + '?' + site.keywordParameter + '=' +  this.keyword
+                  window.open(url);
+                }
+              }
+            }
           }
-          else {
-            window.location.href = '/'
+        }
+      },
+      initSites: function () {
+        for (let engine of this.engines) {
+          if (engine.code == this.typeSelectedCode) {
+            this.siteSelectedCode = engine.sites[0].code
+          }
+        }
+      }
+    },
+    watch: {
+      typeSelectedCode: function () {
+        for (let engine of this.engines) {
+          if (engine.code == this.typeSelectedCode) {
+            this.siteSelectedCode = engine.sites[0].code
           }
         }
       }
     },
     data() {
-      return {
-        options: [
-          {text: '百度', value: 'baidu'},
-          {text: '必应', value: 'bing'},
-          {text: '搜狗', value: 'sougou'},
-          {text: '360', value: '360'},
-          {text: '知乎', value: 'zhihu'},
-          {text: '谷歌', value: 'google'},
-        ],
-        selected: 'baidu',
-        engines: {
-          baidu: 'https://www.baidu.com/s?wd=',
-          bing: 'https://cn.bing.com/search?q=',
-          sougou: 'https://www.sogou.com/web?query=',
-          '360': 'https://www.so.com/s?q=',
-          zhihu: 'https://www.zhihu.com/search?type=content&q=',
-          google: 'https://www.google.com/search?q='
+      let engines = [
+        {
+          name: '搜索引擎',
+          code: 'engine',
+          sites: [
+            {name: '百度', code: 'baidu', url: 'https://www.baidu.com/s', keywordParameter: 'wd'},
+            {name: '必应', code: 'bing', url: 'https://cn.bing.com/search', keywordParameter: 'q'},
+            {name: '搜狗', code: 'sougou', url: 'https://www.sogou.com/web', keywordParameter: 'query'},
+            {name: '360', code: '360', url: 'https://www.so.com/s', keywordParameter: 'q'},
+          ]
         },
+        {
+          name: 'IT相关',
+          code: 'it',
+          sites: [
+            {name: 'GitHub', code: 'github', url: 'https://github.com/search', keywordParameter: 'q'},
+            {
+              name: 'StackOverflow',
+              code: 'stackoverflow',
+              url: 'https://stackoverflow.com/search',
+              keywordParameter: 'q'
+            },
+            {name: '掘金', code: 'juejin', url: 'https://juejin.im/search', keywordParameter: 'query'},
+            {
+              name: 'SegmentFault',
+              code: 'segmentfault',
+              url: 'https://segmentfault.com/search',
+              keywordParameter: 'q'
+            },
+          ]
+        },
+        {
+          name: '视频',
+          code: 'video',
+          sites: [
+            {name: '腾讯视频', code: 'tengxun', url: 'https://v.qq.com/x/search/', keywordParameter: 'q'},
+            {name: '哔哩哔哩', code: 'bilibili', url: 'https://search.bilibili.com/all', keywordParameter: 'keyword'},
+            {name: 'AcFun', code: 'acfun', url: 'http://www.acfun.cn/search/', keywordParameter: 'query'},
+            {name: '乐视视频', code: 'leshi', url: 'http://so.le.com/s', keywordParameter: 'wd'},
+          ]
+        },
+        {
+          name: '问答',
+          code: 'question',
+          sites: [
+            {name: '知乎', code: 'zhihu', url: 'https://www.zhihu.com/search', keywordParameter: 'q'},
+            {name: '百度知道', code: 'zhidao', url: 'https://zhidao.baidu.com/search', keywordParameter: 'word'},
+            {name: '分答', code: 'fenda', url: 'https://fd.zaih.com/search', keywordParameter: 'key'},
+          ]
+        },
+      ];
+      let typeSelected = engines[0];
+      let typeSelectedCode = typeSelected.code;
+      let siteSelectedCode = typeSelected.sites[0].code
+      return {
+        engines: engines,
+        typeSelectedCode: typeSelectedCode,
+        siteSelectedCode: siteSelectedCode,
         keyword: '',
+      }
+    },
+    computed: {
+      result: function () {
+        let typeOptions = [];
+        let siteOptions = [];
+        for (let engine of this.engines) {
+          typeOptions.push({value: engine.code, text: engine.name});
+          if (engine.code == this.typeSelectedCode) {
+            for (let site of engine.sites) {
+              siteOptions.push({value: site.code, text: site.name});
+            }
+          }
+        }
+        return {
+          typeOptions: typeOptions,
+          siteOptions: siteOptions,
+        }
       }
     }
   }
