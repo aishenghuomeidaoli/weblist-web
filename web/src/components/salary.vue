@@ -247,6 +247,9 @@
       </b-tabs>
     </b-card>
     <br/>
+    <div style="display: none">
+      <img :src="monitorUrl">
+    </div>
   </div>
 </template>
 
@@ -295,7 +298,8 @@
         }, {
           text: '工具',
           active: true
-        }]
+        }],
+        monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/tools/salary'
       }
     },
     computed: {

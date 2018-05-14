@@ -23,7 +23,7 @@
       </div>
     </b-form-group>
     <b-input-group>
-      <input type="text" class="form-control" @keyup.enter="search" v-model="keyword">
+      <input type="text" class="form-control" @keyup.enter="search" v-model="keyword" :autofocus="true">
       <b-input-group-append>
         <b-btn variant="outline-success" @click="search">搜索</b-btn>
       </b-input-group-append>
@@ -39,6 +39,9 @@
       <b-tab title="待开放" disabled>
       </b-tab>
     </b-tabs>
+    <div style="display: none">
+      <img :src="monitorUrl">
+    </div>
   </div>
 </template>
 <script>
@@ -136,6 +139,7 @@
         typeSelectedCode: typeSelectedCode,
         siteSelectedCode: siteSelectedCode,
         keyword: '',
+        monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/'
       }
     },
     computed: {
@@ -155,7 +159,7 @@
           siteOptions: siteOptions,
         }
       }
-    }
+    },
   }
 </script>
 
