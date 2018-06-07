@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <!--<auth></auth>-->
     <div>
       <h1>Web List</h1>
       <!--<p>Store And Share<br/>存储与分享</p>-->
@@ -45,8 +46,11 @@
   </div>
 </template>
 <script>
+  import auth from "../components/auth"
+
   export default {
     name: 'index',
+    components: {auth,},
     methods: {
       search: function () {
         if (this.keyword != null && this.keyword != '') {
@@ -54,7 +58,7 @@
             if (engine.code == this.typeSelectedCode) {
               for (let site of engine.sites) {
                 if (site.code == this.siteSelectedCode) {
-                  let url = site.url + '?' + site.keywordParameter + '=' +  this.keyword
+                  let url = site.url + '?' + site.keywordParameter + '=' + this.keyword
                   window.open(url);
                 }
               }
@@ -139,7 +143,7 @@
         typeSelectedCode: typeSelectedCode,
         siteSelectedCode: siteSelectedCode,
         keyword: '',
-        monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/'
+        monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/',
       }
     },
     computed: {

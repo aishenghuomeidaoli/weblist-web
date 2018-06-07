@@ -92,7 +92,7 @@
                     <th>企业缴纳金额(元)</th>
                   </tr>
                   </thead>
-                  <tbody>
+                  <tbody class="input-padding-zero">
                   <tr>
                     <td>
                       养老保险
@@ -441,5 +441,8 @@
 
   .table th {
     width: 20%;
+  }
+  .input-padding-zero input{
+    padding: 0;
   }
 </style>
