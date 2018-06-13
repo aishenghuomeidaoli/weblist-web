@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import ElementUI from 'element-ui';
+import store from './store'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -20,6 +21,7 @@ Vue.use(ElementUI);
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 });
