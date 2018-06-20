@@ -119,10 +119,26 @@
           text: '实时公交',
           active: true
         }],
-        monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/tools/bus-monitor'
+        monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/tools/bus-monitor',
+        meta: {
+          title: 'WebList | 北京实时公交',
+          description: '北京公交实时查询',
+          keywords: '北京,公交,查询,实时'
+        }
       }
     },
     methods: {
+      updateHistoryLinesCookie(){
+        let history_lines  = this.$cookie.get('history');
+        if (history_lines == null){
+          history_lines = []
+        }
+        if (history_lines.length > 4){
+          history_lines = history_lines.slice(4)
+        }
+        history_lines = [{text: this.item.text, value: this.item.value}].concat(history_lines)
+        this.$cookie.set('history', history_lines, 30);
+      },
       fetchLines() { // 获取线路信息
         var self = this;
         services.monitor.fetch_lines().then(function (Data) {
@@ -135,6 +151,7 @@
         var self = this;
         self.direction1 = {};
         self.direction2 = {};
+        // self.updateHistoryLinesCookie();
         services.monitor.fetch_stops(this.item.value).then(function (Data) {
           if (Data.code == 200) {
             if (Data.data.length > 0) {
@@ -150,7 +167,6 @@
       },
       fetchBusTime() { // 获取线路信息
         var self = this;
-        console.log('fetch')
         if (Object.keys(self.direction1).length != 0) {
           self.bustime1 = [];
           services.monitor.fetch_bustime(self.direction1.id).then(function (Data) {
@@ -207,6 +223,11 @@
       showD2: function () {
         return Object.keys(this.direction2).length != 0
       },
+    },
+    mounted: function () {
+      document.title = this.meta.title;
+      document.getElementById('description').content = this.meta.description;
+      document.getElementById('keywords').content = this.meta.keywords;
     }
   }
 </script>

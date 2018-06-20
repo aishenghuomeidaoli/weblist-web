@@ -24,12 +24,26 @@
                               label="税后工资(元)"
                               label-for="exampleInput2">
                   <div id="salaryOutput">{{ tax.result }}</div>
-                  <!--<el-input id="salaryOutput"-->
-                  <!--type="number"-->
-                  <!--v-model="tax.result"-->
-                  <!--disabled>-->
-                  <!--</el-input>-->
                 </b-form-group>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm">
+                <b-form-group id="taxIndividualIncomeGroup"
+                              label="个税起征点(元)"
+                              label-for="taxIndividualIncomeBase">
+                  <b-form-input id="taxIndividualIncomeBase"
+                                type="number"
+                                v-model="form.taxIndividualIncomeBase"
+                                required
+                                placeholder="税前工资(元)">
+                  </b-form-input>
+                </b-form-group>
+              </div>
+              <div class="col-sm">
+                <div style="color: red">
+                * 2018年新政：个税起征点预计调整至5000元
+                </div>
               </div>
             </div>
             <div class="row">
@@ -263,10 +277,14 @@
       ElInput
     },
     name: 'salary',
+    created: function () {
+
+    },
     data() {
       return {
         form: {
           salary: null, // 税前工资
+          taxIndividualIncomeBase: 5000, // 个税起征点
           fullSocialSecurity: true, // 是否全额缴纳五险
           fullProvidentFund: true, // 是否全额缴纳公积金
           taxSocialSecurityBase: null, // 社保基数
@@ -299,7 +317,12 @@
           text: '工具',
           active: true
         }],
-        monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/tools/salary'
+        monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/tools/salary',
+        meta: {
+          title: 'WebList|2018最新工资计算器',
+          description: '2018最新工资计算器，个税起征点上调',
+          keywords: '2018,最新,工资计算器,个税,起征点,上调'
+        }
       }
     },
     computed: {
@@ -328,29 +351,30 @@
 
         // 计算个税
         let left = this.form.salary - this.form.taxSocialSecuritySum - this.form.taxProvidentFundSum;
-        if (left <= 3500) {
+        let left_tax = left - this.form.taxIndividualIncomeBase;  // 应纳税所得额
+        if (left_tax <= 0) {
           this.form.taxIndividualIncome = 0;
         }
-        else if (left <= 5000) {
-          this.form.taxIndividualIncome = parseFloat((left - 3500) * 0.03).toFixed(2);
+        else if (left_tax <= 1455) {
+          this.form.taxIndividualIncome = parseFloat(left_tax * 0.03).toFixed(2);
         }
-        else if (left <= 8000) {
-          this.form.taxIndividualIncome = parseFloat((left - 5000) * 0.1 + 105).toFixed(2);
+        else if (left_tax <= 4155) {
+          this.form.taxIndividualIncome = parseFloat(left_tax * 0.1 - 105).toFixed(2);
         }
-        else if (left <= 12500) {
-          this.form.taxIndividualIncome = parseFloat((left - 8000) * 0.2 + 555).toFixed(2);
+        else if (left_tax <= 7755) {
+          this.form.taxIndividualIncome = parseFloat(left_tax * 0.2 - 555).toFixed(2);
         }
-        else if (left <= 38500) {
-          this.form.taxIndividualIncome = parseFloat((left - 12500) * 0.25 + 1005).toFixed(2);
+        else if (left_tax <= 27255) {
+          this.form.taxIndividualIncome = parseFloat(left_tax * 0.25 - 1005).toFixed(2);
         }
-        else if (left <= 58500) {
-          this.form.taxIndividualIncome = parseFloat((left - 38500) * 0.3 + 2755).toFixed(2);
+        else if (left_tax <= 41255) {
+          this.form.taxIndividualIncome = parseFloat(left_tax * 0.3 - 2755).toFixed(2);
         }
-        else if (left <= 83500) {
-          this.form.taxIndividualIncome = parseFloat((left - 58500) * 0.35 + 5505).toFixed(2);
+        else if (left_tax <= 57505) {
+          this.form.taxIndividualIncome = parseFloat(left_tax * 0.35 - 5505).toFixed(2);
         }
         else {
-          this.form.taxIndividualIncome = parseFloat((left - 83500) * 0.45 + 13505).toFixed(2);
+          this.form.taxIndividualIncome = parseFloat(left_tax * 0.45 - 13505).toFixed(2);
         }
 
         if (this.form.salary != null) {
@@ -385,8 +409,14 @@
           }
         }
       },
+    },
+    mounted: function () {
+      document.title = this.meta.title;
+      document.getElementById('description').content = this.meta.description;
+      document.getElementById('keywords').content = this.meta.keywords;
     }
   }
+
 </script>
 
 
@@ -442,7 +472,8 @@
   .table th {
     width: 20%;
   }
-  .input-padding-zero input{
+
+  .input-padding-zero input {
     padding: 0;
   }
 </style>

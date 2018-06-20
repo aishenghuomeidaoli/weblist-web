@@ -147,6 +147,11 @@
         siteSelectedCode: siteSelectedCode,
         keyword: '',
         monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/',
+        meta: {
+          title: 'WebList',
+          description: 'Web List致力于提供便捷的网站保存与分享，多引擎搜索，在线书签服务',
+          keywords: '多引擎,双引擎,搜索,在线书签,网站保存,搜索引擎,百度,bing,必应,知乎'
+        }
       }
     },
     computed: {
@@ -167,6 +172,11 @@
         }
       }
     },
+    mounted: function () {
+      document.title = this.meta.title;
+      document.getElementById('description').content = this.meta.description;
+      document.getElementById('keywords').content = this.meta.keywords;
+    }
   }
 </script>
 
