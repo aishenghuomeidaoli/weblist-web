@@ -28,7 +28,6 @@ export default {
         config.data = _reqdata;
         break;
       default:
-        console.log("http.request没有匹配到合适的方法。")
         break;
     }
 
@@ -41,7 +40,7 @@ export default {
           resolve(result);
         }
         else{
-          alert(MESSAGE);
+          // alert(MESSAGE);
           store.commit('msg', MESSAGE)
         }
       }).catch(function (error) {

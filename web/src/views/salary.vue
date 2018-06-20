@@ -27,25 +27,23 @@
                 </b-form-group>
               </div>
             </div>
+
             <div class="row">
               <div class="col-sm">
                 <b-form-group id="taxIndividualIncomeGroup"
-                              label="个税起征点(元)"
+                              label="个税起征点"
                               label-for="taxIndividualIncomeBase">
-                  <b-form-input id="taxIndividualIncomeBase"
-                                type="number"
-                                v-model="form.taxIndividualIncomeBase"
-                                required
-                                placeholder="税前工资(元)">
-                  </b-form-input>
+                  <b-form-select id="taxIndividualIncomeBase" v-model="form.taxIndividualSelector.selected"
+                                 :options="form.taxIndividualSelector.options" class="mb-3"/>
                 </b-form-group>
               </div>
               <div class="col-sm">
                 <div style="color: red">
-                * 2018年新政：个税起征点预计调整至5000元
+                  * 个税起征点拟调整至5000元<a href="#info">查看详情</a>
                 </div>
               </div>
             </div>
+            <hr>
             <div class="row">
               <div class="col-sm">
                 <b-form-group id="taxSocialSecurityBaseGroup"
@@ -59,12 +57,17 @@
                         active-color="#13ce66">
                       </el-switch>
                     </el-col>
-                    <el-col :span="16">
+                    <el-col :span="15">
                       <el-input type="number"
                                 v-model="form.taxSocialSecurityBase"
                                 :disabled="form.fullSocialSecurity"
                                 placeholder="五险基数(元)">
                       </el-input>
+                    </el-col>
+                    <el-col :span="1">
+                      <span style="font-size: 24px;text-align: center">
+                      <i class='el-icon-question' @click="changeDescriptionShow()"></i>
+                      </span>
                     </el-col>
                   </el-row>
                 </b-form-group>
@@ -81,17 +84,32 @@
                         active-text="全额缴纳">
                       </el-switch>
                     </el-col>
-                    <el-col :span="16">
+                    <el-col :span="15">
                       <el-input type="number"
                                 v-model="form.taxProvidentFundBase"
                                 :disabled="form.fullProvidentFund"
                                 placeholder="公积金基数(元))">
                       </el-input>
                     </el-col>
+                    <el-col :span="1">
+                      <span style="font-size: 24px;text-align: center">
+                      <i class='el-icon-question' @click="changeDescriptionShow()"></i>
+                      </span>
+                    </el-col>
                   </el-row>
                 </b-form-group>
               </div>
             </div>
+            <div v-if="descriptionShow">
+              <p>
+                <a style="color: #007bff;" target="_blank"
+                   href="http://www.bjrbj.gov.cn/csibiz/home/static/articles/catalog_75200/2018-06-04/article_ff808081583de24e0163c85ce890038e/ff808081583de24e0163c85ce890038e.html">2018年社会保险政：点击查看</a>
+              </p>
+              <p>
+                <a style="color: #007bff;" target="_blank" href="http://www.zzz.gov.cn/html/zcfg/jc/14021.html">2017住房公积金政策：点击查看</a>
+              </p>
+            </div>
+            <hr>
             <b-form-group id="taxDetailGroup"
                           label="扣税明细"
                           label-for="taxDetail">
@@ -255,8 +273,234 @@
             </b-form-group>
           </b-form>
         </b-tab>
-        <b-tab title="实习工资计算器">
-          待开放
+        <!--<b-tab title="实习工资计算器">-->
+        <!--待开放-->
+        <!--</b-tab>-->
+      </b-tabs>
+    </b-card>
+    <hr>
+    <b-card no-body>
+      <b-tabs small card>
+        <b-tab title="2018个税信息">
+          <div>
+            <h3><a id="info" name="info" href="#info">2018最新个人所得税政策</a></h3>
+            <b-alert show variant="secondary">
+              <h4 class="alert-heading">
+                <a href="http://npc.people.com.cn/n1/2018/0620/c14576-30067269.html" target="_blank">
+                  《十三届全国人大常委会第三次会议审议多部法律草案》--人大新闻网
+                </a>
+              </h4>
+              <h5>个人所得税法修正案草案初次审议</h5>
+              <h6>个税起征点拟由每月3500元提至5000元</h6>
+              <p>
+                本报北京6月19日电
+                （记者彭波）19日，十三届全国人大常委会第三次会议审议了《中华人民共和国个人所得税法修正案（草案）》。财政部部长刘昆在作说明时表示，草案综合考虑人民群众消费支出水平增长等各方面因素，将工资、薪金、劳务报酬、稿酬等所得的基本减除费用标准提高到5000元/月（6万元/年）...
+              </p>
+              <a href="http://npc.people.com.cn/n1/2018/0620/c14576-30067269.html" target="_blank">
+                点击查看
+              </a>
+            </b-alert>
+            <hr>
+            <h5>应纳税所得额计算公式</h5>
+            <p>
+              应纳税所得额(m) = 税前工资(s) - 五险一金缴纳数额(t) - 起征点5000元(b)
+            </p>
+            <hr>
+            <h5>个人所得税税率表</h5>
+            <span style="font-size: 12px;color: red">注：15000、25000阶梯待确认</span>
+            <table width="100%">
+              <tbody align="center" style="width: 100%">
+              <tr>
+                <th>
+                  级数
+                </th>
+                <th>
+                  应纳税所得额(m)
+                </th>
+                <th style="width: 80px;">
+                  税率(%)
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  1
+                </td>
+                <td>
+                  m <= 4500
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  2
+                </td>
+                <td>
+                  4500 < m <= 15000
+                </td>
+                <td>
+                  10
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  3
+                </td>
+                <td>
+                  15000 < m <= 25000
+                </td>
+                <td>
+                  20
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  4
+                </td>
+                <td>
+                  25000 < m <= 35000
+                </td>
+                <td>
+                  25
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  5
+                </td>
+                <td>
+                  35000 < m <= 55000
+                </td>
+                <td>
+                  30
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  6
+                </td>
+                <td>
+                  55000 < m <= 80000
+                </td>
+                <td>
+                  35
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  7
+                </td>
+                <td>
+                  m > 80000
+                </td>
+                <td>
+                  45
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </b-tab>
+        <b-tab title="历史个税信息">
+          <div>
+            <h4>个人所得税计算公式</h4>
+            <p>
+              应纳税所得额(m) = 税前工资(s) - 五险一金缴纳数额(t) - 起征点3500元(b)
+            </p>
+            <table width="100%">
+              <tbody align="center" style="width: 100%">
+              <tr>
+                <th>
+                  级数
+                </th>
+                <th>
+                  应纳税所得额(m)
+                </th>
+                <th style="width: 80px;">
+                  税率(%)
+                </th>
+              </tr>
+              <tr>
+                <td>
+                  1
+                </td>
+                <td>
+                  m <= 1500
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  2
+                </td>
+                <td>
+                  1500 < m <= 4500
+                </td>
+                <td>
+                  10
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  3
+                </td>
+                <td>
+                  4500 < m <= 9000
+                </td>
+                <td>
+                  20
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  4
+                </td>
+                <td>
+                  9000 < m <= 35000
+                </td>
+                <td>
+                  25
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  5
+                </td>
+                <td>
+                  35000 < m <= 55000
+                </td>
+                <td>
+                  30
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  6
+                </td>
+                <td>
+                  55000 < m <= 80000
+                </td>
+                <td>
+                  35
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  7
+                </td>
+                <td>
+                  m > 80000
+                </td>
+                <td>
+                  45
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </b-tab>
       </b-tabs>
     </b-card>
@@ -284,11 +528,13 @@
       return {
         form: {
           salary: null, // 税前工资
-          taxIndividualIncomeBase: 5000, // 个税起征点
+          // taxIndividualIncomeBase: 5000, // 个税起征点
           fullSocialSecurity: true, // 是否全额缴纳五险
           fullProvidentFund: true, // 是否全额缴纳公积金
           taxSocialSecurityBase: null, // 社保基数
+          MaxTaxSocialSecurityBase: 25401, // 社保基数上限
           taxProvidentFundBase: null, // 公积金基数
+          MaxTaxProvidentFundBase: 23118, // 公积金基数上限
           taxSocialSecuritySum: null, // 社保总计
           taxProvidentFundSum: null, // 公积金
           taxIndividualIncome: null, // 个税
@@ -309,6 +555,41 @@
             shengyuRate: 1,
             gongjijinRate: 12,
           },
+          taxIndividual: [
+            {
+              version: 2018,
+              base: 5000,
+              steps: {
+                1: {value: 4500, rate: 0.03, differ: 0},
+                2: {value: 15000, rate: 0.1, differ: 315},
+                3: {value: 25000, rate: 0.2, differ: 1815},
+                4: {value: 35000, rate: 0.25, differ: 3065},
+                5: {value: 55000, rate: 0.3, differ: 4815},
+                6: {value: 80000, rate: 0.35, differ: 7565},
+                7: {value: '', rate: 0.45, differ: 15565},
+              },
+            },
+            {
+              version: 2011,
+              base: 3500,
+              steps: {
+                1: {value: 1500, rate: 0.03, differ: 0},
+                2: {value: 4500, rate: 0.1, differ: 105},
+                3: {value: 9000, rate: 0.2, differ: 555},
+                4: {value: 35000, rate: 0.25, differ: 1005},
+                5: {value: 55000, rate: 0.3, differ: 2755},
+                6: {value: 80000, rate: 0.35, differ: 5505},
+                7: {value: '', rate: 0.45, differ: 13505},
+              },
+            },
+          ],
+          taxIndividualSelector: {
+            selected: 0,
+            options: [
+              {value: 0, text: '2018年-5000元'},
+              {value: 1, text: '2011年-3500元'},
+            ]
+          }
         },
         items: [{
           text: 'WebList',
@@ -319,10 +600,11 @@
         }],
         monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/tools/salary',
         meta: {
-          title: 'WebList|2018最新工资计算器',
+          title: '2018最新工资计算器',
           description: '2018最新工资计算器，个税起征点上调',
           keywords: '2018,最新,工资计算器,个税,起征点,上调'
-        }
+        },
+        descriptionShow: false,
       }
     },
     computed: {
@@ -336,45 +618,38 @@
           parseFloat(c.yanglaoRate) + parseFloat(c.yiliaoRate) + parseFloat(c.shiyeRate) +
           parseFloat(c.gongshangRate) + parseFloat(c.shengyuRate));
 
-        // 全额缴纳社保、公积金时，基数与税前工资相同
+        // 全额缴纳社保、公积金时，基数取税前工资与上限最小值
         if (this.form.fullSocialSecurity) {
-          this.form.taxSocialSecurityBase = this.form.salary;
+          this.form.taxSocialSecurityBase = Math.min(this.form.salary, this.form.MaxTaxSocialSecurityBase);
         }
         if (this.form.fullProvidentFund) {
-          this.form.taxProvidentFundBase = this.form.salary;
+          this.form.taxProvidentFundBase = Math.min(this.form.salary, this.form.MaxTaxProvidentFundBase);
         }
 
         // 计算社保之和
         this.form.taxSocialSecuritySum = (this.form.taxSocialSecurityBase * p_rate / 100).toFixed(2);
-        // 公积金
-        this.form.taxProvidentFundSum = (this.form.taxProvidentFundBase * p.gongjijinRate / 100).toFixed(2);
+
+        // 公积金，设置存缴上限
+        this.form.taxProvidentFundSum = Math.min((this.form.taxProvidentFundBase * p.gongjijinRate / 100).toFixed(2), this.form.MaxTaxProvidentFundBase * 0.24);
 
         // 计算个税
-        let left = this.form.salary - this.form.taxSocialSecuritySum - this.form.taxProvidentFundSum;
-        let left_tax = left - this.form.taxIndividualIncomeBase;  // 应纳税所得额
+        let taxIndividual = this.form.taxIndividual[this.form.taxIndividualSelector.selected]; // 使用选中的个税方案
+
+        let left_tax =
+          (this.form.salary
+            - this.form.taxSocialSecuritySum
+            - this.form.taxProvidentFundSum
+            - taxIndividual.base).toFixed(2);  // 应纳税所得额
         if (left_tax <= 0) {
           this.form.taxIndividualIncome = 0;
         }
-        else if (left_tax <= 1455) {
-          this.form.taxIndividualIncome = parseFloat(left_tax * 0.03).toFixed(2);
-        }
-        else if (left_tax <= 4155) {
-          this.form.taxIndividualIncome = parseFloat(left_tax * 0.1 - 105).toFixed(2);
-        }
-        else if (left_tax <= 7755) {
-          this.form.taxIndividualIncome = parseFloat(left_tax * 0.2 - 555).toFixed(2);
-        }
-        else if (left_tax <= 27255) {
-          this.form.taxIndividualIncome = parseFloat(left_tax * 0.25 - 1005).toFixed(2);
-        }
-        else if (left_tax <= 41255) {
-          this.form.taxIndividualIncome = parseFloat(left_tax * 0.3 - 2755).toFixed(2);
-        }
-        else if (left_tax <= 57505) {
-          this.form.taxIndividualIncome = parseFloat(left_tax * 0.35 - 5505).toFixed(2);
-        }
         else {
-          this.form.taxIndividualIncome = parseFloat(left_tax * 0.45 - 13505).toFixed(2);
+          for (let step in taxIndividual.steps) {
+            if (step == 7 || left_tax <= taxIndividual.steps[step].value) {
+              this.form.taxIndividualIncome = parseFloat(left_tax * taxIndividual.steps[step].rate - taxIndividual.steps[step].differ).toFixed(2);
+              break
+            }
+          }
         }
 
         if (this.form.salary != null) {
@@ -409,11 +684,17 @@
           }
         }
       },
-    },
+    }
+    ,
     mounted: function () {
       document.title = this.meta.title;
       document.getElementById('description').content = this.meta.description;
       document.getElementById('keywords').content = this.meta.keywords;
+    },
+    methods: {
+      changeDescriptionShow: function () {
+        this.descriptionShow = !this.descriptionShow
+      }
     }
   }
 
