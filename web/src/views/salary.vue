@@ -33,14 +33,25 @@
                 <b-form-group id="taxIndividualIncomeGroup"
                               label="个税起征点"
                               label-for="taxIndividualIncomeBase">
-                  <b-form-select id="taxIndividualIncomeBase" v-model="form.taxIndividualSelector.selected"
-                                 :options="form.taxIndividualSelector.options" class="mb-3"/>
+                  <el-row>
+                    <el-col :span="23">
+                      <b-form-select id="taxIndividualIncomeBase" v-model="form.taxIndividualSelector.selected"
+                                     :options="form.taxIndividualSelector.options" class="mb-3"/>
+                    </el-col>
+                    <el-col :span="1">
+                      <a href="#info">
+                      <span style="font-size: 24px;text-align: center">
+                      <i class='el-icon-question'></i>
+                      </span>
+                      </a>
+                    </el-col>
+                  </el-row>
                 </b-form-group>
               </div>
               <div class="col-sm">
-                <div style="color: red">
-                  * 个税起征点拟调整至5000元<a href="#info">查看详情</a>
-                </div>
+              <!--<div style="color: red">-->
+              <!--* 个税起征点拟调整至5000元<a href="#info">查看详情</a>-->
+              <!--</div>-->
               </div>
             </div>
             <hr>
@@ -100,13 +111,15 @@
                 </b-form-group>
               </div>
             </div>
-            <div v-if="descriptionShow">
+            <div v-if="descriptionShow" style="font-size: 12px;">
               <p>
                 <a style="color: #007bff;" target="_blank"
-                   href="http://www.bjrbj.gov.cn/csibiz/home/static/articles/catalog_75200/2018-06-04/article_ff808081583de24e0163c85ce890038e/ff808081583de24e0163c85ce890038e.html">2018年社会保险政：点击查看</a>
+                   href="http://www.bjrbj.gov.cn/csibiz/home/static/articles/catalog_75200/2018-06-04/article_ff808081583de24e0163c85ce890038e/ff808081583de24e0163c85ce890038e.html">2018年社保政策：</a>
+                存缴基数上限：25401元，养老、失业基数下限：3387元，医疗、工伤、生育基数下限：5080元。
               </p>
               <p>
-                <a style="color: #007bff;" target="_blank" href="http://www.zzz.gov.cn/html/zcfg/jc/14021.html">2017住房公积金政策：点击查看</a>
+                <a style="color: #007bff;" target="_blank" href="http://www.zzz.gov.cn/html/zcfg/jc/14021.html">2017公积金政策：</a>
+                存缴基数上限：23118元，下限：2148元。
               </p>
             </div>
             <hr>
@@ -308,8 +321,8 @@
             <hr>
             <h5>个人所得税税率表</h5>
             <span style="font-size: 12px;color: red">注：15000、25000阶梯待确认</span>
-            <table width="100%">
-              <tbody align="center" style="width: 100%">
+            <table style="width: 100%">
+              <tbody align="center">
               <tr>
                 <th>
                   级数
@@ -408,8 +421,8 @@
             <p>
               应纳税所得额(m) = 税前工资(s) - 五险一金缴纳数额(t) - 起征点3500元(b)
             </p>
-            <table width="100%">
-              <tbody align="center" style="width: 100%">
+            <table style="width: 100%">
+              <tbody align="center">
               <tr>
                 <th>
                   级数
@@ -535,6 +548,7 @@
           MaxTaxSocialSecurityBase: 25401, // 社保基数上限
           taxProvidentFundBase: null, // 公积金基数
           MaxTaxProvidentFundBase: 23118, // 公积金基数上限
+          MinTaxProvidentFundBase: 2148, // 公积金基数下限
           taxSocialSecuritySum: null, // 社保总计
           taxProvidentFundSum: null, // 公积金
           taxIndividualIncome: null, // 个税
@@ -618,28 +632,76 @@
           parseFloat(c.yanglaoRate) + parseFloat(c.yiliaoRate) + parseFloat(c.shiyeRate) +
           parseFloat(c.gongshangRate) + parseFloat(c.shengyuRate));
 
-        // 全额缴纳社保、公积金时，基数取税前工资与上限最小值
-        if (this.form.fullSocialSecurity) {
-          this.form.taxSocialSecurityBase = Math.min(this.form.salary, this.form.MaxTaxSocialSecurityBase);
+        if (this.form.salary >= 1500) {
+          // 全额缴纳社保时，设置上限
+          if (this.form.fullSocialSecurity) {
+            this.form.taxSocialSecurityBase = Math.min(this.form.salary, this.form.MaxTaxSocialSecurityBase);
+          }
+
+          // 全额缴纳公积金时，设置下限，上限
+          if (this.form.fullProvidentFund) {
+            this.form.taxProvidentFundBase = Math.min(Math.max(this.form.salary, this.form.MinTaxProvidentFundBase), this.form.MaxTaxProvidentFundBase);
+          }
         }
-        if (this.form.fullProvidentFund) {
-          this.form.taxProvidentFundBase = Math.min(this.form.salary, this.form.MaxTaxProvidentFundBase);
+        // 设置五险基数下限, 取消下限设置
+        // let yanglaoShiyeBase = 0;
+        // let yiliaoGongshangShengyuBase = 0;
+        // let yiliaoPerson = 0;
+        // if (this.form.salary >= 1500) {
+        //   yanglaoShiyeBase = (Math.max(this.form.taxSocialSecurityBase, this.form.MaxTaxSocialSecurityBase / 3 * 0.4)).toFixed(2);
+        //   yiliaoGongshangShengyuBase = (Math.max(this.form.taxSocialSecurityBase, this.form.MaxTaxSocialSecurityBase / 3 * 0.6)).toFixed(2);
+        //   yiliaoPerson = (this.form.taxSocialSecurityBase * p.yiliaoRate / 100 + 3).toFixed(2)
+        // }
+
+        let yiliaoPerson = 0;
+        if (this.form.salary > 3) {
+          yiliaoPerson = (this.form.taxSocialSecurityBase * p.yiliaoRate / 100 + 3).toFixed(2);
+
         }
 
-        // 计算社保之和
-        this.form.taxSocialSecuritySum = (this.form.taxSocialSecurityBase * p_rate / 100).toFixed(2);
+        // 计算个人、公司 五险一金明细
+        let person = {
+          yanglao: (this.form.taxSocialSecurityBase * p.yanglaoRate / 100).toFixed(2),
+          yiliao: yiliaoPerson,
+          shiye: (this.form.taxSocialSecurityBase * p.shiyeRate / 100).toFixed(2),
+          gongshang: (this.form.taxSocialSecurityBase * p.gongshangRate / 100).toFixed(2),
+          shengyu: (this.form.taxSocialSecurityBase * p.shengyuRate / 100).toFixed(2),
+          gongjijin: (this.form.taxProvidentFundBase * p.gongjijinRate / 100).toFixed(2),
+        };
+        let company = {
+          yanglao: (this.form.taxSocialSecurityBase * c.yanglaoRate / 100).toFixed(2),
+          yiliao: (this.form.taxSocialSecurityBase * c.yiliaoRate / 100).toFixed(2),
+          shiye: (this.form.taxSocialSecurityBase * c.shiyeRate / 100).toFixed(2),
+          gongshang: (this.form.taxSocialSecurityBase * c.gongshangRate / 100).toFixed(2),
+          shengyu: (this.form.taxSocialSecurityBase * c.shengyuRate / 100.).toFixed(2),
+          gongjijin: (this.form.taxProvidentFundBase * p.gongjijinRate / 100).toFixed(2),
+        };
 
-        // 公积金，设置存缴上限
-        this.form.taxProvidentFundSum = Math.min((this.form.taxProvidentFundBase * p.gongjijinRate / 100).toFixed(2), this.form.MaxTaxProvidentFundBase * 0.24);
+        // 计算个人社保纳税和
+        this.form.taxSocialSecuritySum = [
+          parseFloat(person.yanglao),
+          parseFloat(person.yiliao),
+          parseFloat(person.shiye),
+          parseFloat(person.gongshang),
+          parseFloat(person.shengyu)
+        ].reduce((a, b) => a + b, 0);
 
-        // 计算个税
-        let taxIndividual = this.form.taxIndividual[this.form.taxIndividualSelector.selected]; // 使用选中的个税方案
+        // 计算公积金，并设置存缴上限
+        this.form.taxProvidentFundSum = Math.min(
+          (this.form.taxProvidentFundBase * p.gongjijinRate / 100).toFixed(2),
+          this.form.MaxTaxProvidentFundBase * 0.24);
 
+        // 使用选中的个税方案
+        let taxIndividual = this.form.taxIndividual[this.form.taxIndividualSelector.selected];
+
+        // 应纳税所得额
         let left_tax =
           (this.form.salary
             - this.form.taxSocialSecuritySum
             - this.form.taxProvidentFundSum
-            - taxIndividual.base).toFixed(2);  // 应纳税所得额
+            - taxIndividual.base).toFixed(2);
+
+        // 计算个税
         if (left_tax <= 0) {
           this.form.taxIndividualIncome = 0;
         }
@@ -652,6 +714,7 @@
           }
         }
 
+        // 计算个税平均税率
         if (this.form.salary != null) {
           this.form.taxIndividualIncomeRate = (this.form.taxIndividualIncome / this.form.salary).toFixed(2)
         }
@@ -663,25 +726,10 @@
           person_rate: (p_rate + parseFloat(this.form.person.gongjijinRate) + parseFloat(this.form.taxIndividualIncomeRate)).toFixed(2),
           person_sum: (parseFloat(this.form.taxSocialSecuritySum) + parseFloat(this.form.taxProvidentFundSum) + parseFloat(this.form.taxIndividualIncome)).toFixed(2),
           company_rate: c_rate + parseFloat(this.form.company.gongjijinRate),
-          company_sum: (this.form.taxSocialSecurityBase * c_rate / 100 +
-            this.form.taxProvidentFundBase * c.gongjijinRate / 100).toFixed(2),
+          company_sum: (this.form.taxSocialSecurityBase * c_rate / 100 + this.form.taxProvidentFundBase * c.gongjijinRate / 100).toFixed(2),
           result: (this.form.salary - this.form.taxIndividualIncome - this.form.taxSocialSecuritySum - this.form.taxProvidentFundSum).toFixed(2),
-          person: {
-            yanglao: (this.form.taxSocialSecurityBase * p.yanglaoRate / 100).toFixed(2),
-            yiliao: (this.form.taxSocialSecurityBase * p.yiliaoRate / 100).toFixed(2),
-            shiye: (this.form.taxSocialSecurityBase * p.shiyeRate / 100).toFixed(2),
-            gongshang: (this.form.taxSocialSecurityBase * p.gongshangRate / 100).toFixed(2),
-            shengyu: (this.form.taxSocialSecurityBase * p.shengyuRate / 100).toFixed(2),
-            gongjijin: (this.form.taxProvidentFundBase * p.gongjijinRate / 100).toFixed(2),
-          },
-          company: {
-            yanglao: (this.form.taxSocialSecurityBase * c.yanglaoRate / 100).toFixed(2),
-            yiliao: (this.form.taxSocialSecurityBase * c.yiliaoRate / 100).toFixed(2),
-            shiye: (this.form.taxSocialSecurityBase * c.shiyeRate / 100).toFixed(2),
-            gongshang: (this.form.taxSocialSecurityBase * c.gongshangRate / 100).toFixed(2),
-            shengyu: (this.form.taxSocialSecurityBase * c.shengyuRate / 100.).toFixed(2),
-            gongjijin: (this.form.taxProvidentFundBase * p.gongjijinRate / 100).toFixed(2),
-          }
+          person: person,
+          company: company,
         }
       },
     }
