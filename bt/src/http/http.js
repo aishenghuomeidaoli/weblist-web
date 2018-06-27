@@ -1,5 +1,4 @@
 import axios from 'axios'
-import store from '@/store'
 
 export default {
   baseUrl: "",
@@ -35,15 +34,6 @@ export default {
       axios(config).then(function (resData) {
         let result = resData.data;
         resolve(result)
-        // let MESSAGE = result.msg;
-        // if (result.code == '200') {
-        //   let MESSAGE = null;
-        //   resolve(result);
-        // }
-        // else{
-        //   alert(MESSAGE);
-          // store.commit('msg', MESSAGE)
-        // }
       }).catch(function (error) {
         reject(error);
       });

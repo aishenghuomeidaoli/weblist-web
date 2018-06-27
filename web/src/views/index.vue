@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <!--<auth></auth>-->
+    <feedback></feedback>
     <div>
       <h1>Web List</h1>
-      <!--<p>Store And Share<br/>存储与分享</p>-->
     </div>
     <b-form-group
       label="<code>Store And Share<br/>存储与分享</code>">
@@ -29,20 +29,21 @@
         <b-btn variant="outline-success" @click="search">搜索</b-btn>
       </b-input-group-append>
     </b-input-group>
-    <br/>
-    <b-tabs class="gallery">
-      <b-tab title="工具" active>
-        <br>
-        <a href="/tools/salary" target="_blank">
-          <img src="../assets/wallet_icon.jpg" width="30" height="30"><span>工资计算器</span>
-        </a>
-        <a href="/tools/bus-monitor" target="_blank">
-          <img src="http://p8aa93zss.bkt.clouddn.com/static/v20180613/vehicle_ico2.png" width="30" height="30"><span>实时公交</span>
-        </a>
-      </b-tab>
-      <b-tab title="待开放" disabled>
-      </b-tab>
-    </b-tabs>
+    <hr>
+    <div class="gallery">
+      <a href="/tools/salary" target="_blank">
+        <img src="../assets/wallet_icon.jpg" width="30" height="30"><span>工资计算器</span>
+      </a>
+      <a href="/tools/bus-monitor" target="_blank">
+        <img src="http://p8aa93zss.bkt.clouddn.com/static/v20180613/vehicle_ico2.png" width="30"
+             height="30"><span>实时公交</span>
+      </a>
+    </div>
+    <div class="footer">
+      <span>京ICP证030173号&nbsp;</span>
+      <img width="13" height="16"
+           src="https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/copy_rignt_24.png">
+    </div>
     <div style="display: none">
       <img :src="monitorUrl">
     </div>
@@ -50,10 +51,14 @@
 </template>
 <script>
   import auth from "../components/auth"
+  import feedback from "../components/feedback";
 
   export default {
     name: 'index',
-    components: {auth,},
+    components: {
+      auth,
+      feedback
+    },
     methods: {
       search: function () {
         if (this.keyword != null && this.keyword != '') {

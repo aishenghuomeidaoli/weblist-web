@@ -1,297 +1,295 @@
 <template>
   <div>
+    <feedback></feedback>
     <b-breadcrumb :items="items"/>
-    <b-card no-body>
-      <b-tabs small card>
-        <b-tab title="工资计算器">
-          <!--<h1>工资计算器</h1>-->
-          <b-form class="form">
-            <div class="row">
-              <div class="col-sm">
-                <b-form-group id="salaryInputGroup"
-                              label="税前工资(元)"
-                              label-for="salaryInput">
-                  <b-form-input id="salaryInput"
-                                type="number"
-                                v-model="form.salary"
-                                required
-                                placeholder="税前工资(元)">
-                  </b-form-input>
-                </b-form-group>
-              </div>
-              <div class="col-sm">
-                <b-form-group id="salaryOutputGroup"
-                              label="税后工资(元)"
-                              label-for="exampleInput2">
-                  <div id="salaryOutput">{{ tax.result }}</div>
-                </b-form-group>
-              </div>
-            </div>
+    <h1 class="title">工资计算器</h1>
+    <b-form class="form">
+      <div class="row">
+        <div class="col-sm">
+          <b-form-group id="salaryInputGroup"
+                        label="税前工资(元)"
+                        label-for="salaryInput">
+            <b-form-input id="salaryInput"
+                          type="number"
+                          v-model="form.salary"
+                          required
+                          placeholder="税前工资(元)"
+            >
+            </b-form-input>
+          </b-form-group>
+        </div>
+        <div class="col-sm">
+          <b-form-group id="salaryOutputGroup"
+                        label="税后工资(元)"
+                        label-for="exampleInput2">
+            <div id="salaryOutput">{{ tax.result }}</div>
+          </b-form-group>
+        </div>
+      </div>
 
-            <div class="row">
-              <div class="col-sm">
-                <b-form-group id="taxIndividualIncomeGroup"
-                              label="个税起征点"
-                              label-for="taxIndividualIncomeBase">
-                  <el-row>
-                    <el-col :span="23">
-                      <b-form-select id="taxIndividualIncomeBase" v-model="form.taxIndividualSelector.selected"
-                                     :options="form.taxIndividualSelector.options" class="mb-3"/>
-                    </el-col>
-                    <el-col :span="1">
-                      <a href="#info">
+      <div class="row">
+        <div class="col-sm">
+          <b-form-group id="taxIndividualIncomeGroup"
+                        label="个税起征点"
+                        label-for="taxIndividualIncomeBase">
+            <el-row>
+              <el-col :span="23">
+                <b-form-select id="taxIndividualIncomeBase" v-model="form.taxIndividualSelector.selected"
+                               :options="form.taxIndividualSelector.options" class="mb-3"/>
+              </el-col>
+              <el-col :span="1">
+                <a href="#info">
                       <span style="font-size: 24px;text-align: center">
                       <i class='el-icon-question'></i>
                       </span>
-                      </a>
-                    </el-col>
-                  </el-row>
-                </b-form-group>
-              </div>
-              <div class="col-sm">
-              <!--<div style="color: red">-->
-              <!--* 个税起征点拟调整至5000元<a href="#info">查看详情</a>-->
-              <!--</div>-->
-              </div>
-            </div>
-            <hr>
-            <div class="row">
-              <div class="col-sm">
-                <b-form-group id="taxSocialSecurityBaseGroup"
-                              label="五险基数(元)"
-                              label-for="taxSocialSecurityBase">
-                  <el-row id="taxSocialSecurityBase">
-                    <el-col :span="8">
-                      <el-switch
-                        v-model="form.fullSocialSecurity"
-                        active-text="全额缴纳"
-                        active-color="#13ce66">
-                      </el-switch>
-                    </el-col>
-                    <el-col :span="15">
-                      <el-input type="number"
-                                v-model="form.taxSocialSecurityBase"
-                                :disabled="form.fullSocialSecurity"
-                                placeholder="五险基数(元)">
-                      </el-input>
-                    </el-col>
-                    <el-col :span="1">
+                </a>
+              </el-col>
+            </el-row>
+          </b-form-group>
+        </div>
+        <div class="col-sm">
+          <!--<div style="color: red">-->
+          <!--* 个税起征点拟调整至5000元<a href="#info">查看详情</a>-->
+          <!--</div>-->
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-sm">
+          <b-form-group id="taxSocialSecurityBaseGroup"
+                        label="五险基数(元)"
+                        label-for="taxSocialSecurityBase">
+            <el-row id="taxSocialSecurityBase">
+              <el-col :span="8">
+                <el-switch
+                  v-model="form.fullSocialSecurity"
+                  active-text="全额缴纳"
+                  active-color="#13ce66">
+                </el-switch>
+              </el-col>
+              <el-col :span="15">
+                <el-input type="number"
+                          v-model="form.taxSocialSecurityBase"
+                          :disabled="form.fullSocialSecurity"
+                          placeholder="五险基数(元)">
+                </el-input>
+              </el-col>
+              <el-col :span="1">
                       <span style="font-size: 24px;text-align: center">
                       <i class='el-icon-question' @click="changeDescriptionShow()"></i>
                       </span>
-                    </el-col>
-                  </el-row>
-                </b-form-group>
-              </div>
-              <div class="col-sm">
-                <b-form-group id="taxProvidentFundBaseGroup"
-                              label="公积金基数(元)"
-                              label-for="taxProvidentFundBase">
-                  <el-row id="taxProvidentFundBase">
-                    <el-col :span="8">
-                      <el-switch
-                        v-model="form.fullProvidentFund"
-                        active-color="#13ce66"
-                        active-text="全额缴纳">
-                      </el-switch>
-                    </el-col>
-                    <el-col :span="15">
-                      <el-input type="number"
-                                v-model="form.taxProvidentFundBase"
-                                :disabled="form.fullProvidentFund"
-                                placeholder="公积金基数(元))">
-                      </el-input>
-                    </el-col>
-                    <el-col :span="1">
+              </el-col>
+            </el-row>
+          </b-form-group>
+        </div>
+        <div class="col-sm">
+          <b-form-group id="taxProvidentFundBaseGroup"
+                        label="公积金基数(元)"
+                        label-for="taxProvidentFundBase">
+            <el-row id="taxProvidentFundBase">
+              <el-col :span="8">
+                <el-switch
+                  v-model="form.fullProvidentFund"
+                  active-color="#13ce66"
+                  active-text="全额缴纳">
+                </el-switch>
+              </el-col>
+              <el-col :span="15">
+                <el-input type="number"
+                          v-model="form.taxProvidentFundBase"
+                          :disabled="form.fullProvidentFund"
+                          placeholder="公积金基数(元))">
+                </el-input>
+              </el-col>
+              <el-col :span="1">
                       <span style="font-size: 24px;text-align: center">
                       <i class='el-icon-question' @click="changeDescriptionShow()"></i>
                       </span>
-                    </el-col>
-                  </el-row>
-                </b-form-group>
-              </div>
-            </div>
-            <div v-if="descriptionShow" style="font-size: 12px;">
-              <p>
-                <a style="color: #007bff;" target="_blank"
-                   href="http://www.bjrbj.gov.cn/csibiz/home/static/articles/catalog_75200/2018-06-04/article_ff808081583de24e0163c85ce890038e/ff808081583de24e0163c85ce890038e.html">2018年社保政策：</a>
-                存缴基数上限：25401元，养老、失业基数下限：3387元，医疗、工伤、生育基数下限：5080元。
-              </p>
-              <p>
-                <a style="color: #007bff;" target="_blank" href="http://www.zzz.gov.cn/html/zcfg/jc/14021.html">2017公积金政策：</a>
-                存缴基数上限：23118元，下限：2148元。
-              </p>
-            </div>
-            <hr>
-            <b-form-group id="taxDetailGroup"
-                          label="扣税明细"
-                          label-for="taxDetail">
-              <div>
-                <table class="table">
-                  <thead>
-                  <tr>
-                    <th>项目</th>
-                    <th>个人缴纳比例(%)</th>
-                    <th>个人缴纳金额(元)</th>
-                    <th>企业缴纳比例(%)</th>
-                    <th>企业缴纳金额(元)</th>
-                  </tr>
-                  </thead>
-                  <tbody class="input-padding-zero">
-                  <tr>
-                    <td>
-                      养老保险
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.person.yanglaoRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.person.yanglao }}
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.company.yanglaoRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.company.yanglao }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      医疗保险
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.person.yiliaoRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.person.yiliao }}
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.company.yiliaoRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.company.yiliao }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      失业保险
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.person.shiyeRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.person.shiye }}
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.company.shiyeRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.company.shiye }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      工伤保险
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.person.gongshangRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.person.gongshang }}
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.company.gongshangRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.company.gongshang }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      生育保险
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.person.shengyuRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.person.shengyu }}
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.company.shengyuRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.company.shengyu }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      公积金
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.person.gongjijinRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.person.gongjijin }}
-                    </td>
-                    <td>
-                      <el-input type="number" v-model="form.company.gongjijinRate"
-                                class="pull-right"></el-input>
-                    </td>
-                    <td>
-                      {{ tax.company.gongjijin }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      个人所得税
-                    </td>
-                    <td>{{ this.form.taxIndividualIncomeRate }}</td>
-                    <td>
-                      {{ form.taxIndividualIncome }}
-                    </td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      合计
-                    </td>
-                    <td>
-                      {{ tax.person_rate }}
-                    </td>
-                    <td>
-                      {{ tax.person_sum }}
-                    </td>
-                    <td>
-                      {{ tax.company_rate }}
-                    </td>
-                    <td>
-                      {{ tax.company_sum }}
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </b-form-group>
-          </b-form>
-        </b-tab>
-        <!--<b-tab title="实习工资计算器">-->
-        <!--待开放-->
-        <!--</b-tab>-->
-      </b-tabs>
-    </b-card>
-    <hr>
+              </el-col>
+            </el-row>
+          </b-form-group>
+        </div>
+      </div>
+      <div v-if="descriptionShow" style="font-size: 12px;">
+        <p>
+          <a style="color: #007bff;" target="_blank"
+             href="http://www.bjrbj.gov.cn/csibiz/home/static/articles/catalog_75200/2018-06-04/article_ff808081583de24e0163c85ce890038e/ff808081583de24e0163c85ce890038e.html">2018年社保政策：</a>
+          存缴基数上限：25401元，养老、失业基数下限：3387元，医疗、工伤、生育基数下限：5080元。
+        </p>
+        <p>
+          <a style="color: #007bff;" target="_blank"
+             href="http://www.zzz.gov.cn/html/zcfg/jc/14021.html">2017公积金政策：</a>
+          存缴基数上限：23118元，下限：2148元。
+        </p>
+      </div>
+      <hr>
+      <b-form-group id="taxDetailGroup"
+                    label="扣税明细"
+                    label-for="taxDetail">
+        <div>
+          <table class="table">
+            <thead>
+            <tr>
+              <th>项目</th>
+              <th>个人缴纳比例(%)</th>
+              <th>个人缴纳金额(元)</th>
+              <th>企业缴纳比例(%)</th>
+              <th>企业缴纳金额(元)</th>
+            </tr>
+            </thead>
+            <tbody class="input-padding-zero">
+            <tr>
+              <td>
+                养老保险
+              </td>
+              <td>
+                <el-input type="number" v-model="form.person.yanglaoRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.person.yanglao }}
+              </td>
+              <td>
+                <el-input type="number" v-model="form.company.yanglaoRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.company.yanglao }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                医疗保险
+              </td>
+              <td>
+                <el-input type="number" v-model="form.person.yiliaoRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.person.yiliao }}
+              </td>
+              <td>
+                <el-input type="number" v-model="form.company.yiliaoRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.company.yiliao }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                失业保险
+              </td>
+              <td>
+                <el-input type="number" v-model="form.person.shiyeRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.person.shiye }}
+              </td>
+              <td>
+                <el-input type="number" v-model="form.company.shiyeRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.company.shiye }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                工伤保险
+              </td>
+              <td>
+                <el-input type="number" v-model="form.person.gongshangRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.person.gongshang }}
+              </td>
+              <td>
+                <el-input type="number" v-model="form.company.gongshangRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.company.gongshang }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                生育保险
+              </td>
+              <td>
+                <el-input type="number" v-model="form.person.shengyuRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.person.shengyu }}
+              </td>
+              <td>
+                <el-input type="number" v-model="form.company.shengyuRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.company.shengyu }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                公积金
+              </td>
+              <td>
+                <el-input type="number" v-model="form.person.gongjijinRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.person.gongjijin }}
+              </td>
+              <td>
+                <el-input type="number" v-model="form.company.gongjijinRate"
+                          class="pull-right"></el-input>
+              </td>
+              <td>
+                {{ tax.company.gongjijin }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                个人所得税
+              </td>
+              <td>{{ this.form.taxIndividualIncomeRate }}</td>
+              <td>
+                {{ form.taxIndividualIncome }}
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                合计
+              </td>
+              <td>
+                {{ tax.person_rate }}
+              </td>
+              <td>
+                {{ tax.person_sum }}
+              </td>
+              <td>
+                {{ tax.company_rate }}
+              </td>
+              <td>
+                {{ tax.company_sum }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </b-form-group>
+    </b-form>
+    <!--</b-tab>-->
+    <!--<b-tab title="实习工资计算器">-->
+    <!--待开放-->
+    <!--</b-tab>-->
+    <!--</b-tabs>-->
     <b-card no-body>
       <b-tabs small card>
         <b-tab title="2018个税信息">
@@ -527,11 +525,13 @@
 <script>
   import ElInput from "element-ui/packages/input/src/input";
   import Index from "./index";
+  import feedback from "../components/feedback";
 
   export default {
     components: {
       Index,
-      ElInput
+      ElInput,
+      feedback
     },
     name: 'salary',
     created: function () {
@@ -609,7 +609,7 @@
           text: 'WebList',
           href: '/'
         }, {
-          text: '工具',
+          text: '工资计算器',
           active: true
         }],
         monitorUrl: 'http://106.14.193.52:8080/v1/access_log?app=weblist&path=/tools/salary',
@@ -643,6 +643,10 @@
             this.form.taxProvidentFundBase = Math.min(Math.max(this.form.salary, this.form.MinTaxProvidentFundBase), this.form.MaxTaxProvidentFundBase);
           }
         }
+        else {
+          this.form.taxSocialSecurityBase = 0;
+          this.form.taxProvidentFundBase = 0;
+        }
         // 设置五险基数下限, 取消下限设置
         // let yanglaoShiyeBase = 0;
         // let yiliaoGongshangShengyuBase = 0;
@@ -654,9 +658,8 @@
         // }
 
         let yiliaoPerson = 0;
-        if (this.form.salary > 3) {
+        if (this.form.salary > 1500) {
           yiliaoPerson = (this.form.taxSocialSecurityBase * p.yiliaoRate / 100 + 3).toFixed(2);
-
         }
 
         // 计算个人、公司 五险一金明细
@@ -754,15 +757,14 @@
     text-align: left;
   }
 
-  .el-row {
-    margin-bottom: 5px;
+  /*.el-row {*/
+  /*margin-bottom: 5px*/
+  /*}*/
 
-  &
-  :last-child {
-    margin-bottom: 0;
-  }
+  /*.el-row:last-child {*/
+  /*margin-bottom: 0;*/
+  /*}*/
 
-  }
   .el-col {
     border-radius: 4px;
   }
@@ -804,5 +806,22 @@
 
   .input-padding-zero input {
     padding: 0;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  .el-input__inner {
+    font-size: 12px;
+    height: 20px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+    margin-bottom: 10px
   }
 </style>
