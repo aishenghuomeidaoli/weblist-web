@@ -35,7 +35,7 @@
         <img src="../assets/wallet_icon.jpg" width="30" height="30"><span>工资计算器</span>
       </a>
       <a href="/tools/bus-monitor" target="_blank">
-        <img src="http://p8aa93zss.bkt.clouddn.com/static/v20180613/vehicle_ico2.png" width="30"
+        <img src="../assets/vehicle_ico2.png" width="30"
              height="30"><span>实时公交</span>
       </a>
     </div>
